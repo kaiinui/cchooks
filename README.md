@@ -20,7 +20,7 @@ Add folllowing JSON to `./.claude/settings.json`
         "hooks": [
           {
             "type": "command",
-            "command": "bunx ccdont --deny-bash 'rm -rf [prompt user to do that]' --deny-danger"
+            "command": "bunx ccdont --deny-danger --deny-bash 'rm -rf [prompt user to do that]'"
           }
         ]
       }
@@ -64,3 +64,7 @@ The `--deny-danger` flag activates a comprehensive preset of dangerous commands 
 - And many more...
 
 Use `--deny-danger` as a safety net to prevent accidental execution of destructive commands.
+
+You can see the full list here: [danger.ts](https://github.com/kaiinui/cchooks/blob/main/src/danger.ts)
+
+Keep note that `--deny-danger` is not perfectly safe. There are many dangerous cases which is not covered by preset. This option only prevents typical scenarios.
