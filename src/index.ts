@@ -18,8 +18,8 @@ const respondWithDecision = (decision: DecisionOutput) => {
 const program = new Command();
 
 program
-  .name('cchook')
-  .description('Common hooks for Claude Code')
+  .name('ccdont')
+  .description('Common deny rules for Claude Code')
   .version(packageJson.version || '1.0.0')
   .option('-d, --deny-bash <pattern...>', 'Pattern to deny in commands with optional message: "pattern [message]"')
   .parse(process.argv);

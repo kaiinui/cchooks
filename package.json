@@ -1,15 +1,15 @@
 {
-  "name": "cchook",
+  "name": "ccdont",
   "version": "0.1.0",
-  "module": "index.ts",
+  "module": "src/index.ts",
   "type": "module",
-  "private": true,
   "scripts": {
     "dev": "bun run src/index.ts",
-    "test": "vitest"
+    "test": "vitest",
+    "npm:publish": "bun publish"
   },
   "bin": {
-    "cchook": "index.ts"
+    "ccdont": "src/index.ts"
   },
   "devDependencies": {
     "@tsconfig/bun": "^1.0.8",
