@@ -12,7 +12,9 @@ export function createDecision(cmd: string, denyRules: DenyRule[]): DecisionOutp
   const violatedRule = denyRules.find(rule => cmd.includes(rule.pattern));
   
   if (violatedRule) {
-    const message = violatedRule.message || `${violatedRule.pattern} is not allowed to exec`;
+    const message = violatedRule.message 
+      ? `Command "${cmd}" is not allowed: ${violatedRule.message}`
+      : `Command "${cmd}" is not allowed.`;
     return { decision: "block", reason: message };
   } else {
     return { decision: "approve", reason: "OK" };

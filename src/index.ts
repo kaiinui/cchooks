@@ -3,7 +3,7 @@
 import { Command } from 'commander';
 import packageJson from '../package.json';
 import { createDecision, parseDenyRule, type DecisionOutput, type DenyRule } from './decision';
-import { DANGEROUS_COMMANDS } from './dangerousCommands';
+import { DANGEROUS_COMMANDS } from './danger';
 
 type PreToolUseInput = {
   hook_event_name: string;
@@ -29,7 +29,6 @@ program
 const options = program.opts();
 let denyRules: DenyRule[] = (options.denyBash || []).map(parseDenyRule);
 
-// Add dangerous commands preset if flag is present
 if (options.denyDanger) {
   denyRules = [...denyRules, ...DANGEROUS_COMMANDS];
 }

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { DANGEROUS_COMMANDS } from './dangerousCommands';
+import { DANGEROUS_COMMANDS } from './danger';
 import { createDecision } from './decision';
 
 describe('DANGEROUS_COMMANDS preset', () => {
@@ -63,7 +63,8 @@ describe('DANGEROUS_COMMANDS preset', () => {
   it('should block dangerous database operations', () => {
     const decision = createDecision('mysql -e "DROP DATABASE production"', DANGEROUS_COMMANDS);
     expect(decision.decision).toBe('block');
-    expect(decision.reason).toBe('Dropping databases destroys all data');
+    expect(decision.reason).toContain('DROP DATABASE');
+    expect(decision.reason).toContain('Dropping databases destroys all data');
   });
 
   it('should block wipefs commands', () => {

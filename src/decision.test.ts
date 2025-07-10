@@ -29,7 +29,7 @@ describe('createDecision', () => {
     const decision = createDecision('rm -rf /tmp', denyRules);
     expect(decision).toEqual({
       decision: 'block',
-      reason: 'rm -rf is not allowed to exec'
+      reason: 'Command "rm -rf /tmp" is not allowed.'
     });
   });
 
@@ -40,7 +40,7 @@ describe('createDecision', () => {
     const decision = createDecision('bun test', denyRules);
     expect(decision).toEqual({
       decision: 'block',
-      reason: "use 'bun run test' instead"
+      reason: "Command \"bun test\" is not allowed: use 'bun run test' instead"
     });
   });
 
@@ -52,7 +52,7 @@ describe('createDecision', () => {
     const decision = createDecision('sudo rm -rf /', denyRules);
     expect(decision).toEqual({
       decision: 'block',
-      reason: 'requires elevated permissions'
+      reason: 'Command "sudo rm -rf /" is not allowed: requires elevated permissions'
     });
   });
 
@@ -63,7 +63,7 @@ describe('createDecision', () => {
     const decision = createDecision('npm install -g typescript', denyRules);
     expect(decision).toEqual({
       decision: 'block',
-      reason: 'use local installation'
+      reason: 'Command "npm install -g typescript" is not allowed: use local installation'
     });
   });
 
