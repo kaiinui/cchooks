@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 
 import { Command } from 'commander';
-import packageJson from './package.json';
+import packageJson from '../package.json';
 import { createDecision, parseDenyRule, type DecisionOutput, type DenyRule } from './decision';
 
 type PreToolUseInput = {
@@ -18,8 +18,8 @@ const respondWithDecision = (decision: DecisionOutput) => {
 const program = new Command();
 
 program
-  .name('cchooks')
-  .description('Command hooks validator for security filtering')
+  .name('cchook')
+  .description('Common hooks for Claude Code')
   .version(packageJson.version || '1.0.0')
   .option('-d, --deny-bash <pattern...>', 'Pattern to deny in commands with optional message: "pattern [message]"')
   .parse(process.argv);

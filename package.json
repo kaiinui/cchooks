@@ -1,11 +1,15 @@
 {
-  "name": "cchooks",
-  "version": "1.0.0",
+  "name": "cchook",
+  "version": "0.1.0",
   "module": "index.ts",
   "type": "module",
   "private": true,
   "scripts": {
+    "dev": "bun run src/index.ts",
     "test": "vitest"
+  },
+  "bin": {
+    "cchook": "index.ts"
   },
   "devDependencies": {
     "@tsconfig/bun": "^1.0.8",
