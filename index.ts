@@ -1,6 +1,8 @@
-/**
- * usage: bunx cchooks --deny-tool "bun test"
- */
+#!/usr/bin/env bun
+
+import { Command } from 'commander';
+import packageJson from './package.json';
+import { createDecision, parseDenyRule, type DecisionOutput, type DenyRule } from './decision';
 
 type PreToolUseInput = {
   hook_event_name: string;
@@ -8,16 +10,22 @@ type PreToolUseInput = {
   tool_input?: { command?: string };
 };
 
-type DecisionOutput = {
-  decision: "block" | "approve";
-  reason: string;
+const respondWithDecision = (decision: DecisionOutput) => {
+  console.log(JSON.stringify(decision));
+  process.exit(decision.decision === "block" ? 2 : 0);
 }
 
-const makeDecision = (type: DecisionOutput["decision"], reason: string) => {
-  const output = { decision: type, reason } satisfies DecisionOutput;
-  console.log(JSON.stringify(output));
-  process.exit(type === "block" ? 2 : 0);
-}
+const program = new Command();
+
+program
+  .name('cchooks')
+  .description('Command hooks validator for security filtering')
+  .version(packageJson.version || '1.0.0')
+  .option('-d, --deny-bash <pattern...>', 'Pattern to deny in commands with optional message: "pattern [message]"')
+  .parse(process.argv);
+
+const options = program.opts();
+const denyRules: DenyRule[] = (options.denyBash || []).map(parseDenyRule);
 
 const stdin = await Bun.stdin.text();
 const data = JSON.parse(stdin) as PreToolUseInput;
@@ -27,12 +35,5 @@ if (data.hook_event_name !== "PreToolUse" || data.tool_name !== "Bash") {
 }
 
 const cmd = data.tool_input?.command ?? "";
-const forbidden = "bun test";
-
-const isViolated = cmd.includes(forbidden);
-
-if (isViolated) {
-  makeDecision("block", `${cmd} is forbidden`);
-} else {
-  makeDecision("approve", "OK");
-}
+const decision = createDecision(cmd, denyRules);
+respondWithDecision(decision);

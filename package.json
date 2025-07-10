@@ -1,12 +1,21 @@
 {
   "name": "cchooks",
+  "version": "1.0.0",
   "module": "index.ts",
   "type": "module",
   "private": true,
+  "scripts": {
+    "test": "vitest"
+  },
   "devDependencies": {
-    "@types/bun": "latest"
+    "@tsconfig/bun": "^1.0.8",
+    "@types/bun": "latest",
+    "vitest": "^3.2.4"
   },
   "peerDependencies": {
     "typescript": "^5"
+  },
+  "dependencies": {
+    "commander": "^14.0.0"
   }
 }
