@@ -3,6 +3,7 @@
 import { Command } from 'commander';
 import packageJson from '../package.json';
 import { createDecision, parseDenyRule, type DecisionOutput, type DenyRule } from './decision';
+import { DANGEROUS_COMMANDS } from './dangerousCommands';
 
 type PreToolUseInput = {
   hook_event_name: string;
@@ -22,10 +23,16 @@ program
   .description('Common deny rules for Claude Code')
   .version(packageJson.version || '1.0.0')
   .option('-d, --deny-bash <pattern...>', 'Pattern to deny in commands with optional message: "pattern [message]"')
+  .option('--deny-danger', 'Block dangerous commands like rm -rf, dd, mkfs, etc.')
   .parse(process.argv);
 
 const options = program.opts();
-const denyRules: DenyRule[] = (options.denyBash || []).map(parseDenyRule);
+let denyRules: DenyRule[] = (options.denyBash || []).map(parseDenyRule);
+
+// Add dangerous commands preset if flag is present
+if (options.denyDanger) {
+  denyRules = [...denyRules, ...DANGEROUS_COMMANDS];
+}
 
 const stdin = await Bun.stdin.text();
 const data = JSON.parse(stdin) as PreToolUseInput;
