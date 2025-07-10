@@ -28,8 +28,9 @@ program
 program
   .command('init')
   .description('Initialize .claude/settings.json with ccdont hooks')
-  .action(async () => {
-    await initCommand();
+  .option('--add-notification', 'Add notification hooks using terminal-notifier')
+  .action(async (options) => {
+    await initCommand(options);
   });
 
 // Default behavior (hook mode)

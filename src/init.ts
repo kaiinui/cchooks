@@ -25,6 +25,10 @@ type Matcher = {
 type Settings = {
   hooks?: {
     PreToolUse?: Matcher[];
+    Notification?: Array<{
+      matcher: string;
+      hooks: Hook[];
+    }>;
   };
 };
 
@@ -54,7 +58,7 @@ const DEFAULT_MATCHER: Matcher = {
   hooks: [DEFAULT_HOOK]
 };
 
-export async function initCommand(): Promise<void> {
+export async function initCommand(options: { addNotification?: boolean } = {}): Promise<void> {
   const claudeDir = join(process.cwd(), '.claude');
   const settingsPath = join(claudeDir, 'settings.json');
 
@@ -110,6 +114,46 @@ export async function initCommand(): Promise<void> {
       } else {
         console.log(`${colors.yellow}⚡${colors.reset} ${colors.cyan}ccdont${colors.reset} hooks already configured`);
       }
+    }
+  }
+
+  // Add notification hooks if requested
+  if (options.addNotification) {
+    // Check if terminal-notifier is installed
+    const checkNotifier = Bun.spawnSync(["which", "terminal-notifier"]);
+    if (checkNotifier.exitCode !== 0) {
+      console.log(`\n${colors.yellow}⚠${colors.reset} terminal-notifier is not installed.`);
+      console.log(`${colors.blue}ℹ${colors.reset} To install it, run: ${colors.bold}brew install terminal-notifier${colors.reset} ${colors.yellow}[prompt user to exec]${colors.reset}`);
+      process.exit(1);
+    }
+
+    // Initialize Notification if not present
+    if (!settings.hooks.Notification) {
+      settings.hooks.Notification = [];
+    }
+
+    // Add general notification hook
+    const iconPath = join(__dirname, 'claude-code-icon.png');
+    const generalNotificationHook: Hook = {
+      type: "command",
+      command: `terminal-notifier -title 'Claude Code' -message 'Task completed' -appIcon ${iconPath}`
+    };
+
+    const notificationMatcher = {
+      matcher: "",
+      hooks: [generalNotificationHook]
+    };
+
+    // Check if general notification already exists
+    const hasGeneralNotification = settings.hooks.Notification.some(
+      m => m.matcher === "" && m.hooks.some(h => h.command?.includes("terminal-notifier"))
+    );
+
+    if (!hasGeneralNotification) {
+      settings.hooks.Notification.push(notificationMatcher);
+      console.log(`${colors.green}✓${colors.reset} Added Claude notifications`);
+    } else {
+      console.log(`${colors.yellow}⚡${colors.reset} Notifications already configured`);
     }
   }
 

@@ -6,7 +6,18 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bunx ccdont --deny-danger --deny-bash 'bun test'"
+            "command": "bunx ccdont --deny-danger"
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "terminal-notifier -title 'Claude Code' -message 'Task completed' -appIcon /Users/kaiinui/dev/cchooks/src/claude-code-icon.png"
           }
         ]
       }
