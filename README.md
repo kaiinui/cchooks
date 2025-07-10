@@ -1,5 +1,14 @@
 # cchooks
 
+Simple pre-defined hooks to disallow specific commands and gives meaningful feedback to Claude Code.
+
+## Why?
+
+* Writing hooks in `jq` and `bash` are not human readable.
+* You might only want to deny few specific command patterns.
+
+## Installation
+
 Add folllowing JSON to `./.claude/settings.json`
 
 ```json
@@ -11,7 +20,7 @@ Add folllowing JSON to `./.claude/settings.json`
         "hooks": [
           {
             "type": "command",
-            "command": "bunx ccdont --deny-bash 'bun test [use \"bun run test\" instead.]'"
+            "command": "bunx ccdont --deny-bash 'rm -rf [prompt user to do that]'"
           }
         ]
       }
