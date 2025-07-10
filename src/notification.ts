@@ -1,5 +1,6 @@
 import * as fs from 'fs';
 import { execSync } from 'child_process';
+import { resolve } from 'path';
 
 type HookInput = {
   session_id: string;
@@ -40,9 +41,10 @@ export async function handleNotification() {
   const lastUserMessage = extractLastUserPrompt(payload.transcript_path);
   const prompt = lastUserMessage ? `Task completed: ${lastUserMessage}` : 'Task completed';
   const preview = prompt.replace(/\s+/g, ' ').slice(0, 120);
+  const src = resolve(__dirname, 'claude-code-icon.png');
   
   try {
-    execSync(`terminal-notifier -title "Claude Code" -message "${preview}"`, {
+    execSync(`terminal-notifier -title "Claude Code" -message "${preview}" -appIcon ${src}`, {
       stdio: 'ignore'
     });
   } catch (notifyError) {
