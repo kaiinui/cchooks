@@ -37,15 +37,12 @@ function extractLastUserPrompt(transcriptPath: string): string | null {
 export async function handleNotification() {
   const inputData = await Bun.stdin.text();
   const payload = JSON.parse(inputData) as HookInput;
-  const prompt = extractLastUserPrompt(payload.transcript_path) ?? 'Task completed';
+  const lastUserMessage = extractLastUserPrompt(payload.transcript_path);
+  const prompt = lastUserMessage ? `Task completed: ${lastUserMessage}` : 'Task completed';
   const preview = prompt.replace(/\s+/g, ' ').slice(0, 120);
   
   try {
-    const title = 'Claude Code';
-    const message = preview;
-    
-    console.log(title, message);
-    execSync(`terminal-notifier -title "${title}" -message "${message}"`, {
+    execSync(`terminal-notifier -title "Claude Code" -message "${preview}"`, {
       stdio: 'ignore'
     });
   } catch (notifyError) {

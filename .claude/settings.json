@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bunx ccdont --deny-danger"
+            "command": "bunx ccdont@latest --deny-danger"
           }
         ]
       }
@@ -17,7 +17,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bunx ccdont notification"
+            "command": "bunx ccdont@latest notification"
           }
         ]
       }
