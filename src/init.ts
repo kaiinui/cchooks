@@ -132,11 +132,12 @@ export async function initCommand(options: { addNotification?: boolean } = {}): 
       settings.hooks.Notification = [];
     }
 
-    // Add general notification hook
-    const iconPath = join(__dirname, 'claude-code-icon.png');
+    // Add general notification hook using ccdont notification
+    const runner = getCommandRunner();
+    const packageSuffix = runner === "npx" ? "@latest" : "";
     const generalNotificationHook: Hook = {
       type: "command",
-      command: `terminal-notifier -title 'Claude Code' -message 'Task completed' -appIcon ${iconPath}`
+      command: `${runner} ccdont${packageSuffix} notification`
     };
 
     const notificationMatcher = {
@@ -146,12 +147,12 @@ export async function initCommand(options: { addNotification?: boolean } = {}): 
 
     // Check if general notification already exists
     const hasGeneralNotification = settings.hooks.Notification.some(
-      m => m.matcher === "" && m.hooks.some(h => h.command?.includes("terminal-notifier"))
+      m => m.matcher === "" && m.hooks.some(h => h.command?.includes("ccdont") && h.command?.includes("notification"))
     );
 
     if (!hasGeneralNotification) {
       settings.hooks.Notification.push(notificationMatcher);
-      console.log(`${colors.green}✓${colors.reset} Added Claude notifications`);
+      console.log(`${colors.green}✓${colors.reset} Added Claude notifications using ${colors.cyan}ccdont notification${colors.reset}`);
     } else {
       console.log(`${colors.yellow}⚡${colors.reset} Notifications already configured`);
     }

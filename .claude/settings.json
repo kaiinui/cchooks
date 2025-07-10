@@ -17,7 +17,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "terminal-notifier -title 'Claude Code' -message 'Task completed' -appIcon /Users/kaiinui/dev/cchooks/src/claude-code-icon.png"
+            "command": "bunx ccdont notification"
           }
         ]
       }

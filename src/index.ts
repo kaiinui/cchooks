@@ -5,6 +5,7 @@ import packageJson from '../package.json';
 import { createDecision, parseDenyRule, type DecisionOutput, type DenyRule } from './decision';
 import { DANGEROUS_COMMANDS } from './danger';
 import { initCommand } from './init';
+import { handleNotification } from './notification';
 
 type PreToolUseInput = {
   hook_event_name: string;
@@ -31,6 +32,13 @@ program
   .option('--add-notification', 'Add notification hooks using terminal-notifier')
   .action(async (options) => {
     await initCommand(options);
+  });
+
+program
+  .command('notification')
+  .description('Handle Claude Code notification events and send macOS notifications')
+  .action(async () => {
+    await handleNotification();
   });
 
 // Default behavior (hook mode)
