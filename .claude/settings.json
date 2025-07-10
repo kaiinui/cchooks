@@ -6,7 +6,18 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bunx ccdont --deny-bash 'rm [prompt user to exec]' --deny-bash 'bun test [use \"bun run test\" instead.]' --deny-bash 'npm [use bun instead.]'"
+            "command": "bunx ccdont@latest --deny-danger"
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bunx ccdont@latest notification"
           }
         ]
       }
