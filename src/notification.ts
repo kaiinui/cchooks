@@ -39,7 +39,8 @@ export async function handleNotification() {
   const inputData = await Bun.stdin.text();
   const payload = JSON.parse(inputData) as HookInput;
   const lastUserMessage = extractLastUserPrompt(payload.transcript_path);
-  const prompt = lastUserMessage ? `Task completed: ${lastUserMessage}` : 'Task completed';
+  const prefix = '☑️ Task completed';
+  const prompt = lastUserMessage ? `${prefix}: ${lastUserMessage}` : prefix;
   const preview = prompt.replace(/\s+/g, ' ').slice(0, 120);
   const src = resolve(__dirname, 'claude-code-icon.png');
   

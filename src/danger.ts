@@ -98,6 +98,8 @@ export const DANGEROUS_COMMANDS: DenyRule[] = [
   { pattern: "find / -delete", message: "Finding and deleting from root is dangerous" },
   { pattern: "find / -exec rm", message: "Finding and removing from root is dangerous" },
   { pattern: "find . -delete", message: "Finding and deleting files can remove important data" },
+  { pattern: "find / -name \"*\" -exec", message: "Finding and executing commands on all files is dangerous" },
+  { pattern: "xargs rm", message: "Piping to xargs rm can delete many files at once" },
   
   // Systemctl dangers
   { pattern: "systemctl stop sshd", message: "Stopping SSH can lock you out of remote systems" },
@@ -151,4 +153,19 @@ export const DANGEROUS_COMMANDS: DenyRule[] = [
   { pattern: "poweroff", message: "This will power off the system" },
   { pattern: "halt", message: "This will halt the system" },
   { pattern: "reboot -f", message: "Force reboot can cause data loss" },
+  
+  // Additional file operations
+  { pattern: "mv / ", message: "Moving root directory can break the system" },
+  { pattern: "mv /* ", message: "Moving all root contents can break the system" },
+  { pattern: "cp /dev/zero", message: "Copying from /dev/zero can fill disk space" },
+  { pattern: "cp /dev/urandom", message: "Copying from /dev/urandom can fill disk space" },
+  { pattern: "truncate -s 0", message: "Truncating files to zero size destroys content" },
+  
+  // Dangerous sed/awk operations
+  { pattern: "sed -i '' -e", message: "In-place sed without backup can permanently modify files" },
+  { pattern: "sed -i -e", message: "In-place sed without backup can permanently modify files" },
+  { pattern: "awk -i inplace", message: "In-place awk can permanently modify files" },
+  
+  // Homebrew dangers
+  { pattern: "brew uninstall --force", message: "Force uninstalling can break dependencies" },
 ];
