@@ -1,15 +1,16 @@
 # cchooks
 
-Simple pre-defined hooks to disallow specific commands and gives meaningful feedback to Claude Code.
+**cchooks** provides simple, pre-defined hooks that block dangerous shell commands and return helpful feedback to Claude Code.
 
-## Why?
+## Why use cchooks?
 
-* Writing hooks in `jq` and `bash` are not human readable.
-* You might only want to deny few specific command patterns.
+* **Readable hooks** – Writing complex patterns in `jq` or `bash` can be hard to maintain.
+  cchooks lets you describe them declaratively in JSON.
+* **Targeted denial** – Block only the exact commands (or patterns) you care about, instead of every shell invocation.
 
 ## Installation
 
-Add folllowing JSON to `./.claude/settings.json`
+Add the following snippet to `./.claude/settings.json`:
 
 ```json
 {
@@ -29,42 +30,51 @@ Add folllowing JSON to `./.claude/settings.json`
 }
 ```
 
-## Example
+## Example Configurations
 
-| options | ⭕️ allowed | ✖️ blocked |
-|:---|:---|:---|
-| `--deny-bash 'rm --rf'` | `rm foo.md` | `rm --rf ~/` |
-| `--deny-bash 'bun test [use bun run test instead]'` | `bun run test` | `bun test` (📝 use bun run test instead) |
-| `--deny-bash 'bun test' --deny-bash 'npm [use bun instead]'` | `bun run index.ts` | `bun test`, `npm install foo` (📝 use bun instead) |
-| `--deny-danger` | `ls -la`, `git status`, `git commit` | `rm -rf /`, `dd if=/dev/zero of=/dev/sda`, `git push --force` |
+You can configure which commands to deny using `--deny-bash` as many as you want.
 
-## Dangerous Commands Preset
+| Option                                                       | ✅ Allowed                            | 🚫 Blocked                                                             |
+| :----------------------------------------------------------- | :----------------------------------- | :--------------------------------------------------------------------- |
+| `--deny-bash 'rm --rf'`                                      | `rm foo.md`                          | `rm --rf ~/`                                                           |
+| `--deny-bash 'bun test [use bun run test instead]'`          | `bun run test`                       | `bun test` <br>*(💡 Hint shown: “use bun run test instead”)*           |
+| `--deny-bash 'bun test' --deny-bash 'npm [use bun instead]'` | `bun run index.ts`                   | `bun test`, `npm install foo` <br>*(💡 Hint shown: “use bun instead”)* |
+| `--deny-danger`                                              | `ls -la`, `git status`, `git commit` | `rm -rf /`, `dd if=/dev/zero of=/dev/sda`, `git push --force`          |
 
-The `--deny-danger` flag activates a comprehensive preset of dangerous commands that could cause data loss or system damage. This includes:
+## `--deny-danger` preset
 
-- **File system destruction**: `rm -rf`, `rm -fr`, etc.
-- **Disk operations**: `dd`, `mkfs.*`, `format`, `fdisk`, `parted`
-- **Data wiping**: `shred`, `wipefs`, `blkdiscard`
-- **Dangerous redirections**: `> /dev/sda`, `> /etc/passwd`, `> /boot/`
-- **Fork bombs**: `:(){:|:&};:`
-- **Dangerous permissions**: `chmod -R 777`, `chmod -R 000`
-- **Package manager dangers**: Force removing critical packages
-- **Piping to sudo**: `curl | sudo bash`, `wget -O - | sudo sh`
-- **System shutdown**: `shutdown`, `poweroff`, `halt`, `init 0`
-- **Database operations**: `DROP DATABASE`, `TRUNCATE TABLE`
-- **Network dangers**: Flushing firewall rules
-- **Git destructive operations**: 
-  - `git push --force` / `git push -f` - Can overwrite remote history
-  - `git reset --hard` - Discards all uncommitted changes
-  - `git clean -fdx` - Removes all untracked files permanently
-  - `git branch -D` - Force deletes branches
-  - `git filter-branch` / `git filter-repo` - Rewrites Git history
-  - `rm -rf .git` - Deletes entire repository history
-  - And more Git operations that can cause data loss
-- And many more...
+Enabling `--deny-danger` activates a thorough list of high-risk commands, protecting you from accidents that could wipe data or corrupt a system.
 
-Use `--deny-danger` as a safety net to prevent accidental execution of destructive commands.
+### What it blocks
 
-You can see the full list here: [danger.ts](https://github.com/kaiinui/cchooks/blob/main/src/danger.ts)
+* **File-system destruction** – `rm -rf`, `rm -fr`, …
+* **Raw disk operations** – `dd`, `mkfs.*`, `fdisk`, `parted`, `format`, …
+* **Data-wipe utilities** – `shred`, `wipefs`, `blkdiscard`
+* **Dangerous redirections** – e.g. `> /dev/sda`, `> /etc/passwd`, `> /boot/`
+* **Fork bombs** – `:(){ :|:& };:`
+* **Extreme permission changes** – `chmod -R 777`, `chmod -R 000`
+* **Package-manager pitfalls** – Removing critical system packages with `--force`, `--no-scripts`, etc.
+* **Pipeline-to-root** – `curl | sudo bash`, `wget -O - | sudo sh`
+* **System shutdowns** – `shutdown`, `poweroff`, `halt`, `init 0`
+* **Destructive SQL** – `DROP DATABASE`, `TRUNCATE TABLE`
+* **Firewall flushes** – wiping all iptables/nftables rules
+* **Hazardous Git actions**
 
-Keep note that `--deny-danger` is not perfectly safe. There are many dangerous cases which is not covered by preset. This option only prevents typical scenarios.
+  * `git push --force` / `git push -f` – overwrites remote history
+  * `git reset --hard` – discards all local changes
+  * `git clean -fdx` – permanently deletes untracked files
+  * `git branch -D` – force-deletes branches
+  * `git filter-branch`, `git filter-repo` – rewrites history
+  * `rm -rf .git` – erases the repository
+  * *…and many similar commands*
+
+Use the preset as a safety net—but remember it can’t cover every edge case.
+
+You can inspect the full list here: [`danger.ts`](https://github.com/kaiinui/cchooks/blob/main/src/danger.ts).
+
+> **Note**
+> The preset greatly reduces risk, yet it’s not fool-proof. Always review your hooks and add extra patterns for project-specific threats.
+
+---
+
+Happy (and safer) hacking!
